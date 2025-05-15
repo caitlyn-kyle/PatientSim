@@ -1,6 +1,6 @@
 # PatientSim: A Persona-Driven Simulator for Realistic Doctor-Patient Interactions 
 
-Files and Structure
+## Files and Structure
 We provide 170 patient profiles divided as follows:
 - Persona Evaluation (108 profiles) – Located in the persona_test folder.
 - Factual Accuracy & Clinical Plausibility Evaluation (52 profiles) – Located in the info_test folder.
