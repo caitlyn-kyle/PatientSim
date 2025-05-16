@@ -2,7 +2,7 @@
 
 export GOOGLE_APPLICATION_CREDENTIALS=../google_credentials.json
 export GOOGLE_PROJECT_ID="YOUR_PROJECT_ID"
-
+export GOOGLE_PROJECT_ID="823855790163"
 # Capture the start time
 start_time=$(date +%s)
 
@@ -80,14 +80,12 @@ python "data_preprocessing/key_extraction.py" \
     --save_dir "$SAVE_DIR" \
     --exp_name "profile_extraction" \
     --prompt_dir "prompts/data_preprocessing/key_extraction" \
-    --debug 
 
 python "data_preprocessing/data_filtering.py" \
     --data_dir "$SAVE_DIR" \
     --key_dir "$SAVE_DIR/profile_extraction" \
     --prompt_dir "prompts/data_preprocessing/data_filtering" 
     
-
 python "data_preprocessing/key_modification.py" \
     --data_dir "$SAVE_DIR" \
     --key_dir "$SAVE_DIR/profile_extraction" \

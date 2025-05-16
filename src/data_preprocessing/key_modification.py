@@ -125,7 +125,8 @@ def main(args):
 
         final_output = {k: answer[k] if k in answer else v for k, v in init_data.items()}
         final_results.append(final_output)
-    final_results = dict(sorted(final_results, key=lambda x: x["hadm_id"]))
+
+    final_results = sorted(final_results, key=lambda x: x["hadm_id"])
     save_to_json(final_results, os.path.join(args.key_dir, f"{args.model}_mod_results.json"))
 
 
