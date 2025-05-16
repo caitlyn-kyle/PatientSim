@@ -3,11 +3,11 @@
 ## Overview
 Doctor-patient consultations require multi-turn, context-aware communication tailored to diverse patient personas. 
 Training or evaluating doctor LLMs in such settings requires realistic patient interaction systems. However, existing simulators often fail to reflect the full range of personas seen in clinical practice. 
-To address this, we introduce PatientSim, a patient simulator that generates realistic and diverse patient personas for clinical scenarios, grounded in medical expertise.
+To address this, we introduce PatientSim, a patient simulator that reflects realistic and diverse patient personas for clinical scenarios, grounded in medical expertise.
 PatientSim operates using: 1) clinical profiles, including symptoms and medical history, derived from real-world data in the MIMIC-ED and MIMIC-IV datasets, and 2) personas defined by four axes, personality, language proficiency, medical history recall level, and cognitive confusion level, yielding 37 unique combinations.
 We evaluated eight LLMs for factual accuracy and persona consistency. 
 The top-performing open-source model, Llama 3.3, was validated by four clinicians to confirm the robustness of our framework.
-As an open-source, customizable platform, \mname provides a reproducible and scalable solution that can be customized for specific training needs. 
+As an open-source, customizable platform, PatientSim provides a reproducible and scalable solution that can be customized for specific training needs. 
 Offering a privacy-compliant environment, it serves as a robust testbed for evaluating medical dialogue systems across diverse patient presentations and shows promise as an educational tool for healthcare.
 
 
@@ -41,8 +41,8 @@ All these source datasets require a credentialed Physionet credentialing. To acc
 
 
 ### Download
-Download the dataset using the provided link [<a href="https://kaggle.com/datasets/f04fc0f48b1b3677d31006555c5f8bae7766a7384c66ba210f6526bd58d85b79">link</a>]
-Unzip the dataset in the `./src/data/final_data` folder, which is the default path for the PatientSim experiment.
+- Download the dataset using the provided link [<a href="https://kaggle.com/datasets/f04fc0f48b1b3677d31006555c5f8bae7766a7384c66ba210f6526bd58d85b79">link</a>].
+- Unzip the dataset in the `./src/data/final_data` folder, which is the default path for the PatientSim experiment.
 
 
 ### Data Preprocessing
@@ -128,8 +128,7 @@ python run_simulation.py \
 ```
 **Note**: Adjust persona types and LLM backbones as needed. Default hyperparameters are based on the paper's experiments.
 
-<br /><br />
-
+<br />
 
 ## Evaluation
 ### Dialog-Level Evaluation
@@ -157,3 +156,6 @@ python ./eval/llm_eval_NLI_batch.py \
     --eval_target all \
     --moderator_api_type genai
 ```
+
+### Analysis
+To analyze the results in more detail, we provide a Jupyter Notebook (`analysis.ipynb`) in the same link as the dataset [<a href="https://kaggle.com/datasets/f04fc0f48b1b3677d31006555c5f8bae7766a7384c66ba210f6526bd58d85b79">link</a>].
