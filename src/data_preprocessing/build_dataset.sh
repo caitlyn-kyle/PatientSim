@@ -2,6 +2,7 @@
 
 export GOOGLE_APPLICATION_CREDENTIALS=../google_credentials.json
 export GOOGLE_PROJECT_ID="YOUR_PROJECT_ID"
+export GOOGLE_PROJECT_LOCATION="YOUR_PROJECT_LOCATION"
 
 # Capture the start time
 start_time=$(date +%s)
@@ -91,7 +92,7 @@ python "data_preprocessing/key_modification.py" \
     --key_dir "$SAVE_DIR/profile_extraction" \
     --prompt_dir "prompts/data_preprocessing/key_modification" 
 
-cp "$SAVE_DIR/profile_extraction/gemini-2.5-flash-preview-04-17_mod_results.json" "$SAVE_DIR/sample_dict.json"
+cp "$SAVE_DIR/profile_extraction/gemini-2.5-flash_mod_results.json" "$SAVE_DIR/sample_dict.json"
 
 python "data_preprocessing/mapping_CEFR_words.py" \
     --data_dir "$SAVE_DIR" \
