@@ -30,6 +30,7 @@ Update your API key before running:
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="YOUR_GOOGLE_APPLICATION_CREDENTIALS_PATH"
 export GOOGLE_PROJECT_ID="YOUR_PROJECT_ID"
+export GOOGLE_PROJECT_LOCATION="YOUR_PROJECT_LOCATION"
 ```
 **Note**: While this script mirrors our internal preprocessing, results may vary due to fluctuations in the API. For consistent outcomes, we recommend using the preprocessed dataset, which will be made available on PhysioNet.
 
