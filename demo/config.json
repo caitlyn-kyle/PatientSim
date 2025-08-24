@@ -1,0 +1,8 @@
+{
+  "model": "gemini-2.5-flash",
+  "backend_api_type": "genai",
+  "prompt_dir": "../src/prompts/simulation",
+  "patient_prompt_file": "initial_system_patient_w_persona",
+  "personality_bias_file": "personality_bias.json",
+  "random_seed": 42
+}
