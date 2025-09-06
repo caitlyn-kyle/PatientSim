@@ -3,21 +3,20 @@ import time
 import json
 import datetime
 from google import genai
+from dotenv import load_dotenv
 
 from google.genai import types
 from google.genai.types import HttpOptions
 from openai import AzureOpenAI, OpenAI
 
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "./google_credentials.json")
-os.environ["GOOGLE_PROJECT_ID"] = os.getenv("GOOGLE_PROJECT_ID", "") 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY", "")
-AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT", "")
-GOOGLE_PROJECT_ID = os.getenv("GOOGLE_PROJECT_ID", "")
-GOOGLE_PROJECT_LOCATION = os.getenv("GOOGLE_PROJECT_LOCATION", "")
-PORT = os.getenv("VLLM_PORT", "")
+load_dotenv(override=True)
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "./google_credentials.json")
+AZURE_OPENAI_KEY = os.environ.get("AZURE_OPENAI_KEY", "")
+AZURE_ENDPOINT = os.environ.get("AZURE_ENDPOINT", "")
+GOOGLE_PROJECT_ID = os.environ.get("GOOGLE_PROJECT_ID", "")
+GOOGLE_PROJECT_LOCATION = os.environ.get("GOOGLE_PROJECT_LOCATION", "")
+PORT = os.environ.get("VLLM_PORT", "")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "./google_credentials.json")
 
 if AZURE_OPENAI_KEY != "":
     azure_client = AzureOpenAI(
@@ -26,13 +25,10 @@ if AZURE_OPENAI_KEY != "":
         api_version="2024-10-21",
     )
 
-if OPENAI_API_KEY != "":
-    client = OpenAI(api_key=OPENAI_API_KEY)
-
 if GOOGLE_PROJECT_ID != "":
     gen_client = genai.Client(vertexai=True, project=GOOGLE_PROJECT_ID, location=GOOGLE_PROJECT_LOCATION, http_options=HttpOptions(api_version="v1"))
 
-time_gap = {"gpt-4": 3, "gpt-3.5-turbo": 0.5}
+time_gap = {"gpt-4": 3}
 
 
 def get_answer(response):
@@ -50,7 +46,7 @@ def get_answer(response):
 def gpt_azure_response(message: list, model="gpt-4o", temperature=0, seed=42, **kwargs):
     time.sleep(time_gap.get(model, 3))
     try:
-        return azure_client.chat.completions.create(model=model, messages=message, temperature=temperature, seed=seed)
+        return azure_client.chat.completions.create(model=model, messages=message, temperature=temperature, seed=seed, **kwargs)
     except Exception as e:
         error_msg = str(e).lower()
         if "context" in error_msg or "length" in error_msg:
@@ -58,7 +54,7 @@ def gpt_azure_response(message: list, model="gpt-4o", temperature=0, seed=42, **
                 message = [message[0]] + message[2:]
         print(e)
         time.sleep(time_gap.get(model, 3) * 2)
-        return gpt_azure_response(message, model, temperature)
+        return gpt_azure_response(model=model, messages=message, temperature=temperature, seed=seed, **kwargs)
 
 
 def gemini_response(message: list, model="gemini-2.0-flash", temperature=0, seed=42, **kwargs):
