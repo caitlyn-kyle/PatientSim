@@ -1,4 +1,5 @@
 import os
+import logging
 
 from utils import file_to_string, prompt_valid_check
 from models import get_response_method, vllm_model_setup, get_answer, get_token_log
@@ -21,7 +22,7 @@ class DoctorAgent:
         self.model = vllm_model_setup(self.backend) if self.backend_api_type == "vllm" else self.backend
 
         if verbose:
-            print(f"Setting doctor agent with backend: {self.model} ({self.backend_api_type})")
+            logging.info(f"Setting doctor agent with backend: {self.model} ({self.backend_api_type})")
 
         # Load prompt text file
         self.system_prompt_text = file_to_string(os.path.join(self.prompt_dir, self.prompt_file + ".txt"))
@@ -30,8 +31,8 @@ class DoctorAgent:
         self.doctor_greet = "Hello, how can I help you?"
         self.reset()
         if verbose:
-            print(f" - Prompt file: {self.prompt_file}")
-            print(f" - System prompt: {self.system_prompt()}")
+            logging.info(f" - Prompt file: {self.prompt_file}")
+            logging.info(f" - System prompt: {self.system_prompt()}")
 
     def system_prompt(self) -> str:
         system_prompt = self.system_prompt_text.format(

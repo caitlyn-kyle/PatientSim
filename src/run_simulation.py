@@ -50,6 +50,7 @@ def main(cfg):
     for _scenario_id in range(0, num_scenarios):
         # Initialize scenarios
         scenario = scenario_loader.get_scenario(id=_scenario_id)
+        logging.info(f"\n=== Scenario {_scenario_id} / {num_scenarios} | hadm_id: {scenario['hadm_id']} ===")
 
         # Initialize agents
         patient_agent = PatientAgent(
@@ -59,6 +60,10 @@ def main(cfg):
             prompt_dir=cfg.prompt_dir,
             prompt_file=cfg.data.patient_prompt_file,
             num_word_sample=cfg.data.num_word_sample,
+            cefr_type=cfg.patient_agent.persona.cefr_type,
+            personality_type=cfg.patient_agent.persona.personality_type,
+            recall_level_type=cfg.patient_agent.persona.recall_level_option,
+            dazed_level_type=cfg.patient_agent.persona.dazed_level_option,
             client_params=cfg.patient_agent.params,
             verbose=cfg.experiment.verbose,
         )

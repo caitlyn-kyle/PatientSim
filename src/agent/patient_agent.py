@@ -1,7 +1,8 @@
 import os
 import json
+import logging
 
-from utils import file_to_string, prompt_valid_check
+from utils import file_to_string, prompt_valid_check, process_string
 from models import get_response_method, vllm_model_setup, get_answer, get_token_log
 
 
@@ -33,7 +34,7 @@ class PatientAgent:
         self.model = vllm_model_setup(self.backend) if self.backend_api_type == "vllm" else self.backend
 
         if verbose:
-            print(f"Setting patient agent with backend: {self.model} ({self.backend_api_type})")
+            logging.info(f"Setting patient agent with backend: {self.model} ({self.backend_api_type})")
 
         # Load patient profile & setting bias
         self.patient_profile = patient_profile
@@ -47,7 +48,7 @@ class PatientAgent:
 
         # Set persona of patient 
         if verbose:
-            print(f"Setting patient profile: {patient_profile['hadm_id']} - {patient_profile['diagnosis']}")
+            logging.info(f"Setting patient profile: {patient_profile['hadm_id']} - {patient_profile['diagnosis']}")
 
         patient_profile['cefr_option'] = patient_profile.pop('cefr') if cefr_type is None else cefr_type
         patient_profile['personality_option'] = patient_profile.pop('personality') if personality_type is None else personality_type
@@ -61,10 +62,10 @@ class PatientAgent:
 
         self.check_valid_argument()
         if verbose:
-            print(f" - CEFR Level: {patient_profile['cefr_option']}")
-            print(f" - Personality Type: {patient_profile['personality_option']}")
-            print(f" - Memory Recall Level: {patient_profile['recall_level_option']}")
-            print(f" - Dazed Level: {patient_profile['dazed_level_option']}")
+            logging.info(f" - CEFR Level: {patient_profile['cefr_option']}")
+            logging.info(f" - Personality Type: {patient_profile['personality_option']}")
+            logging.info(f" - Memory Recall Level: {patient_profile['recall_level_option']}")
+            logging.info(f" - Dazed Level: {patient_profile['dazed_level_option']}")
             
         # Set CEFR bias
         cefr_levels = ["A", "B", "C"]
@@ -130,8 +131,8 @@ class PatientAgent:
         self.diagnosis = patient_profile["diagnosis"]
         self.reset()
         if verbose:
-            print(f" - Prompt file: {self.prompt_file}")
-            print(f" - System prompt: {self.system_prompt}")
+            logging.info(f" - Prompt file: {self.prompt_file}")
+            logging.info(f" - System prompt: {self.system_prompt}")
 
     
     def check_valid_argument(self):
@@ -167,6 +168,7 @@ class PatientAgent:
         self.messages.append({"role": "user", "content": f"{question}"})
         response = self.client(self.messages, model=self.model, **self.client_params)
         answer = get_answer(response)
+        answer = process_string(answer)
         self.log_token_usage(response)
         self.messages.append({"role": "assistant", "content": f"{answer}"})
         return answer
