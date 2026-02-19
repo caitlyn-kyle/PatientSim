@@ -12,7 +12,7 @@ from hydra.core.hydra_config import HydraConfig
 from agent.doctor_agent import DoctorAgent
 from agent.patient_agent import PatientAgent
 from utils import file_to_string, save_to_dialogue, set_seed, detect_termination
-
+from eval.question_evaluator import QuestionEvaluator
 
 class ScenarioLoaderMIMICIV:
     def __init__(self, data_dir, data_name="sample_info") -> None:
@@ -78,6 +78,11 @@ def main(cfg):
             client_params=cfg.doctor_agent.params,
             verbose=cfg.experiment.verbose,
         )
+        
+        evaluator = QuestionEvaluator(
+            patient_profile=patient_agent.patient_profile,
+            config=cfg
+        )
 
         # Start dialogue
         start_time = time.time()
@@ -99,9 +104,14 @@ def main(cfg):
                 doctor_response = doctor_agent.inference(dialog_history[-1]["content"])
             dialog_history.append({"role": "Doctor", "content": doctor_response})
             logging.info("Doctor [{}%]: {}".format(int(((inf_idx + 1) / cfg.experiment.total_inferences) * 100), doctor_response))
+            
+            # ---- QUESTION EVALUATION ----
+            if inf_idx != cfg.experiment.total_inferences - 1:
+                evaluation_result = evaluator.evaluate(doctor_response)
 
             end_flag = detect_termination(doctor_response)
             if end_flag:
+                feedback_summary = evaluator.generate_feedback()
                 break
 
             # Prevent API timeouts
