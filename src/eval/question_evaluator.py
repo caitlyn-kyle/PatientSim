@@ -5,6 +5,8 @@ class QuestionEvaluator:
         self.covered_items = set()
         self.volunteered = set()
         self.symptoms = self.extract_positive_symptoms()
+        self.predicted_diagnoses = []  # store top-5 diagnoses
+
 
     SYMPTOM_NORMALIZATION = {
         "sob": ["shortness of breath", "difficulty breathing", "dyspnea"],
@@ -257,6 +259,12 @@ class QuestionEvaluator:
             return 0.8
 
         return 0.0
+    
+    def get_predicted_diagnoses(self, diagnoses):
+        self.predicted_diagnoses = diagnoses
+        for diag in self.predicted_diagnoses:
+            print(f"Predicted Diagnoses: {diag}")
+        return self.predicted_diagnoses
 
     def generate_feedback(self):
         if not self.history:
@@ -307,6 +315,7 @@ class QuestionEvaluator:
 
         # Summary print
         print("==== Interview Evaluation Summary ====")
+        self.get_predicted_diagnoses(self.predicted_diagnoses)
         print(f"Overall Weighted Score: {weighted_score_percent:.1f}%")
         print(f"Relevance Score (normalized): {relevance_percent_total:.1f}%")
         print(f"Structure Score (normalized): {structure_percent_total:.1f}%")

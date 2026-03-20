@@ -5,6 +5,7 @@ import json
 import hydra
 import random
 import logging
+import re
 
 logging.getLogger("httpx").setLevel(logging.WARNING)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -88,6 +89,7 @@ def main(cfg):
         start_time = time.time()
         dialog_history = [{"role": "Doctor", "content": doctor_agent.doctor_greet}]
         doctor_agent.messages.append({"role": "assistant", "content": f"{doctor_agent.doctor_greet}"})
+        predicted_diagnoses = []
         logging.info(f"Doctor: {doctor_agent.doctor_greet}")
 
         for inf_idx in range(cfg.experiment.total_inferences):
@@ -100,6 +102,9 @@ def main(cfg):
             # Obtain doctor dialogue
             if inf_idx == cfg.experiment.total_inferences - 1:
                 doctor_response = doctor_agent.inference(dialog_history[-1]["content"] + "\nThis is the final turn. Now, you must provide your top5 differential diagnosis.")
+                # Extract top 5 diagnoses for evaluation
+                pattern = r"^\s*\d+\.\s*(.+)"
+                predicted_diagnoses = re.findall(pattern, doctor_response, re.MULTILINE)[:5]
             else:
                 doctor_response = doctor_agent.inference(dialog_history[-1]["content"])
             dialog_history.append({"role": "Doctor", "content": doctor_response})
@@ -128,7 +133,8 @@ def main(cfg):
             "personality_type": patient_agent.patient_profile["personality_option"],
             "recall_level_type": patient_agent.patient_profile["recall_level_option"],
             "dazed_level_type":patient_agent.patient_profile["dazed_level_option"],
-            "diagnosis": patient_agent.diagnosis,
+            "ground_truth_diagnosis": patient_agent.diagnosis,
+            "predicted_diagnoses": predicted_diagnoses,
             "dialog_history": dialog_history,
             "patient_token_log": patient_agent.token_log,
             "doctor_token_log": doctor_agent.token_log,
